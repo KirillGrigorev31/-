@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ПРОЕКТ КСЗ</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Consolas,monospace;background:#000;color:#ccc;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.h{text-align:center;padding:16px;border-bottom:1px solid #222;position:relative;z-index:2;background:#000}
+.h b{color:#f22;letter-spacing:6px;font-size:20px}
+.h i{display:block;color:#666;letter-spacing:8px;font-size:11px;margin-top:6px;font-style:normal}
+.scr{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:20px;min-height:0;position:relative;overflow:hidden}
+.lab{color:#f22;letter-spacing:4px;font-size:26px;font-weight:bold;text-align:center;text-shadow:0 0 12px rgba(255,34,34,.5);position:relative;z-index:1}
+.lab small{display:block;color:#666;font-size:11px;letter-spacing:2px;font-weight:normal;margin-top:6px;text-shadow:none}
+input{background:#0a0a0a;border:1px solid #333;color:#f22;padding:14px;font-size:22px;text-align:center;letter-spacing:6px;font-family:inherit;width:100%;max-width:280px;outline:none;position:relative;z-index:1}
+button{background:#f22;color:#000;border:none;padding:16px 40px;font-size:16px;letter-spacing:3px;font-weight:bold;font-family:inherit;cursor:pointer;min-height:54px;min-width:200px;position:relative;z-index:1}
+#msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.msg{max-width:75%;align-self:flex-start;background:#0a0a0a;border-right:2px solid #444;padding:8px 12px;font-size:14px;color:#ddd;word-break:break-word}
+.msg.me{align-self:flex-end;border-right:none;border-left:2px solid #f22}
+.msg .u{color:#f22;font-size:10px;letter-spacing:2px;font-weight:bold;margin-bottom:4px}
+.msg.me .u{text-align:right}
+.ia{display:flex;gap:8px;padding:10px;border-top:1px solid #222;background:#050505}
+.ia input{flex:1;font-size:16px;letter-spacing:0;text-align:left;padding:12px;min-width:0;max-width:none}
+.ia button{min-height:48px;min-width:auto;padding:0 16px;font-size:12px}
+#st{padding:10px;font-size:11px;color:#666;text-align:center;background:#0a0a0a;border-top:1px solid #222;min-height:36px;font-weight:bold}
+.glyphs{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.glyphs span{position:absolute;color:#00ff44;opacity:.13;font-family:'MS Gothic','Yu Gothic',serif;font-weight:bold;text-shadow:0 0 18px rgba(0,255,60,.55),0 0 40px rgba(0,255,60,.25);user-select:none;animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{opacity:.10}50%{opacity:.22}}
+</style>
+</head>
+<body>
+
+<script>
+window.onerror = function(m){
+  var s = document.getElementById('st');
+  if (s){ s.textContent = 'ОШИБКА: ' + m; s.style.color = '#f22'; }
+};
+</script>
+
+<div class="h"><b>ПРОЕКТ КСЗ</b><i>МЁРТВАЯ РУКА</i></div>
+
+<div class="scr" id="s1">
+  <div class="lab">ПИН-КОД<small>ШЕСТИЗНАЧНЫЙ ДОСТУП</small></div>
+  <input id="p" type="text" inputmode="decimal" maxlength="10">
+  <button onclick="pinGo()">ВОЙТИ</button>
+</div>
+
+<div class="scr" id="s2" style="display:none">
+  <div class="glyphs" aria-hidden="true">
+    <span style="top:8%;left:6%;font-size:64px;animation-delay:0s">死</span>
+    <span style="top:20%;right:10%;font-size:48px;animation-delay:.4s">機</span>
+    <span style="bottom:16%;left:10%;font-size:56px;animation-delay:.8s">密</span>
+    <span style="top:48%;left:5%;font-size:40px;animation-delay:1.2s">手</span>
+    <span style="bottom:8%;right:8%;font-size:52px;animation-delay:1.6s">危</span>
+    <span style="top:74%;left:44%;font-size:44px;animation-delay:2.0s">護</span>
+    <span style="top:10%;left:46%;font-size:36px;animation-delay:.6s">鍵</span>
+    <span style="bottom:32%;right:30%;font-size:60px;animation-delay:1.4s">封</span>
+  </div>
+  <div class="lab">ПАРОЛЬ<small>ВТОРОЙ УРОВЕНЬ ЗАЩИТЫ</small></div>
+  <input id="q" type="password" inputmode="numeric" maxlength="20">
+  <button onclick="passGo()">ВОЙТИ</button>
+</div>
+
+<div class="scr" id="s3" style="display:none;padding:0;align-items:stretch;justify-content:flex-start">
+  <div id="msgs"></div>
+  <div class="ia">
+    <input id="mi" placeholder="СООБЩЕНИЕ...">
+    <button onclick="sendGo()">ОТПРАВИТЬ</button>
+  </div>
+</div>
+
+<div id="st">ЗАГРУЗКА</div>
+
+<script>
+function setStatus(t, e){
+  var s = document.getElementById('st');
+  s.textContent = t;
+  s.style.color = e ? '#f22' : '#666';
+}
+
+function pinGo(){
+  try {
+    var v = document.getElementById('p').value.trim();
+    if (v !== '21.11' && v !== '21,11'){
+      document.getElementById('p').value = '';
+      setStatus('НЕВЕРНЫЙ ПИН', true);
+      return;
+    }
+    document.getElementById('s1').style.display = 'none';
+    document.getElementById('s2').style.display = 'flex';
+    setStatus('ПИН ВЕРНЫЙ, ВВЕДИ ПАРОЛЬ');
+  } catch(err){ setStatus('ОШИБКА: ' + err.message, true); }
+}
+
+function passGo(){
+  try {
+    var v = document.getElementById('q').value.trim();
+    if (v !== '1955'){
+      document.getElementById('q').value = '';
+      setStatus('НЕВЕРНЫЙ ПАРОЛЬ', true);
+      return;
+    }
+    document.getElementById('s2').style.display = 'none';
+    document.getElementById('s3').style.display = 'flex';
+    setStatus('ДОСТУП РАЗРЕШЁН');
+    loadMsgs();
+  } catch(err){ setStatus('ОШИБКА: ' + err.message, true); }
+}
+
+function loadMsgs(){
+  var box = document.getElementById('msgs');
+  box.innerHTML = '';
+  try {
+    var arr = JSON.parse(localStorage.getItem('ksc_m') || '[]');
+    for (var i = 0; i < arr.length; i++) drawMsg(arr[i]);
+  } catch(e){}
+  box.scrollTop = box.scrollHeight;
+}
+
+function drawMsg(m){
+  var d = document.createElement('div');
+  d.className = 'msg me';
+  var u = document.createElement('div');
+  u.className = 'u';
+  u.textContent = 'ПОЛЬЗОВАТЕЛЬ';
+  var t = document.createElement('div');
+  t.textContent = m.text;
+  d.appendChild(u);
+  d.appendChild(t);
+  document.getElementById('msgs').appendChild(d);
+}
+
+function sendGo(){
+  try {
+    var inp = document.getElementById('mi');
+    var text = inp.value.trim();
+    if (!text) return;
+    var m = { text: text, time: Date.now() };
+    var arr = [];
+    try { arr = JSON.parse(localStorage.getItem('ksc_m') || '[]'); } catch(e){}
+    arr.push(m);
+    if (arr.length > 300) arr = arr.slice(-300);
+    localStorage.setItem('ksc_m', JSON.stringify(arr));
+    drawMsg(m);
+    document.getElementById('msgs').scrollTop = document.getElementById('msgs').scrollHeight;
+    inp.value = '';
+  } catch(err){ setStatus('ОШИБКА: ' + err.message, true); }
+}
+
+setStatus('ГОТОВ');
+</script>
+</body>
+</html>
